@@ -1,4 +1,4 @@
-#Let's Introduce Kotlin
+# Let's Introduce Kotlin
 ## Kotlin 특징을 알아보자!
 
 ### 간결한 문법
