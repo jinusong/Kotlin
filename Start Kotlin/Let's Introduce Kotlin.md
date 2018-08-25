@@ -1,6 +1,8 @@
 #Let's Introduce Kotlin
-## 특징
+## Kotlin 특징을 알아보자!
+
 ### 간결한 문법
+
 * Kotlin은 Java보다 더 간결한 문법을 가졌습니다.
 * ;(세미콜론) X
 * 객체 생성시 new 키워드 X
@@ -54,3 +56,32 @@ val mutable: MutableList<String> = mutableListOf("foo", "bar", "baz")
 // 성공: MutableList에는 자료를 수정할 수 있는 함수가 정의되어 있습니다.
 mutable.add("Foo")
 ```
+
+### 람다 표현식 지원
+* Android는 개발 환경의 제약으로 람다 표현식을 사용하기 어려웠지만 Kotlin은 기본으로 람다 표현식을 지원합니다.
+* 특별한 제약 없이 코드를 더 간소화 할 수 있습니다.
+* Java로 작성된 인터페이스에 한해 Single Abstract Method 변환을 지원합니다.
+* 그래서 함수의 인자로 전달되는 인터페이스의 인스턴스를 람다식으로 표현이 가능합니다.
+```
+val view = ...
+// SAM 변환을 통해 OnClickListener
+// 인터페이스의 인스턴스를 람다식으로 표현합니다.
+view.setOnClickListener {
+    Toast.makeText(it.context, "Click", Toast.LENGTH_SHORT).show()
+}
+```
+
+### 스트림 API 지원
+* Kotlin에서는 Stream API와 유사한 함수들을 기본 라이브러리에서 지원하기 때문에 컬렉션 내의 자료를 다루기 용이합니다.
+(모든 Android version, platform에서 사용 가능)
+```
+val items = listOf(10, 2, 3, 5, 6)
+// 리스트 내 항목 중 짝수의 합을 구합니다.
+val sumOfEvens = items.filter { it % 2 == 0 }.sum()
+```
+
+### 완벽한 자바 호환성
+* 개발을 할 시에 Kotlin을 쓰다 원하는 부분만 Java로 코드 작성이 가능합니다.
+* 따라서 기존의 자바 코드를 오랜 시간에 걸쳐 바꾸는 것이 가능합니다.
+* 코드 뿐만 아니라 라이브러리와도 모두 호환됩니다. (자바 기반 환경을 그대로 사용가능)
+* 대부분 혼용 가능하지만 사용 시 유의해야할 부분이나 살짝 다른 부분들은 존재합니다.
