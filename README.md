@@ -9,4 +9,7 @@
 * Kotlin은 어떻게 쓰는 것인지도 함께 다루고 있습니다.
 (기본 문법)
 
+### Java Vs Kotlin
+* Kotlin과 Java를 비교하는 곳입니다.
+* Java에서의 문법이나 개념이 Kotlin에서는 얼마나 비슷하고 다른지 알아가는 곳입니다.
 [Strat Kotlin]: https://github.com/jinusong/Kotlin/tree/master/Start%20Kotlin
