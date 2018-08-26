@@ -5,11 +5,16 @@
 * 차세대 개발자가 되기 위한 한 학생의 Kotlin Leaning 레퍼지토리입니다.
 ## 목차
 ### Start Kotlin
+* [Start Kotlin]
 * 정말 Kotlin이란 언어는 무엇인가라는 주제를 중심으로 Kotlin을 탐구하는 곳입니다.
 * Kotlin은 어떻게 쓰는 것인지도 함께 다루고 있습니다.
 (기본 문법)
 
 ### Java Vs Kotlin
+* [Java Vs Kotlin]
 * Kotlin과 Java를 비교하는 곳입니다.
 * Java에서의 문법이나 개념이 Kotlin에서는 얼마나 비슷하고 다른지 알아가는 곳입니다.
-[Strat Kotlin]: https://github.com/jinusong/Kotlin/tree/master/Start%20Kotlin
+
+[Start Kotlin]:https://github.com/jinusong/Kotlin/tree/master/Start%20Kotlin
+
+[Java Vs Kotlin]:https://github.com/jinusong/Kotlin/tree/master/Java%20Vs%20Kotlin
