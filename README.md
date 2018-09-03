@@ -19,6 +19,7 @@
 * [Kotlin's Characteristics]
 * Kotlin만의 특징을 알아가는 곳입니다.
 * Kotlin은 특별한 특징들이 많습니다.
+
 [Start Kotlin]:https://github.com/jinusong/Kotlin/tree/master/Start%20Kotlin
 
 [Java Vs Kotlin]:https://github.com/jinusong/Kotlin/tree/master/Java%20Vs%20Kotlin
