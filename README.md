@@ -27,6 +27,11 @@
 * Kotlin의 표준 라이브러리에는 개발 시 유용하게 사용할 수 있는 여러 함수들을 갖추었습니다.
 * 진짜 편해요!
 
+### Using Kotlin with Java
+* [Using Kotlin with Java]
+* Kotlin은 Java와 완벽히 호환되므로, 프로젝트 내 일부 코드만 Kotlin으로 작성하고 나머지는 Java 코드는 그래도 유지한 채로 사용할 수 있습니다.
+* 하지만 Kotlin과 Java는 언어 구성이 엄연히 다른 만큼 일부 기능은 Java와 Kotlin 간 혼용을 위해 특별한 처리를 해야 합니다.
+
 [Start Kotlin]:https://github.com/jinusong/Kotlin/tree/master/Start%20Kotlin
 
 [Java Vs Kotlin]:https://github.com/jinusong/Kotlin/tree/master/Java%20Vs%20Kotlin
@@ -34,3 +39,5 @@
 [ Characteristics of Kotlin ]:https://github.com/jinusong/Kotlin/tree/master/Kotlin's%20Characteristics%20
 
 [Standard Library Function]:https://github.com/jinusong/Kotlin/tree/master/Standard%20Library%20of%20Kotlin
+
+[Using Kotlin with Java]:https://github.com/jinusong/Kotlin/tree/master/Using%20Kotlin%20with%20Java
