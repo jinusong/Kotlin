@@ -33,7 +33,7 @@
 * 하지만 Kotlin과 Java는 언어 구성이 엄연히 다른 만큼 일부 기능은 Java와 Kotlin 간 혼용을 위해 특별한 처리를 해야 합니다.
 
 ### Kotlin Android Extension
-* [Kotlin Android Extenstion]
+* [Kotlin Android Extension]
 * Kotlin Andrtoid Extension은 복잡한 구조로 구성된 화면을 다루는 코드의 가독성 문제 등을 해결할 수 있는 친구입니다.
 * 코드를 보기도 편해지고 짧아져요!
 
@@ -46,3 +46,5 @@
 [Standard Library Function]:https://github.com/jinusong/Kotlin/tree/master/Standard%20Library%20of%20Kotlin
 
 [Using Kotlin with Java]:https://github.com/jinusong/Kotlin/tree/master/Using%20Kotlin%20with%20Java
+
+[Kotlin Android Extension]: https://github.com/jinusong/Kotlin/tree/master/Kotlin%20Android%20Extension
