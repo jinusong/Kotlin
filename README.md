@@ -32,6 +32,11 @@
 * Kotlin은 Java와 완벽히 호환되므로, 프로젝트 내 일부 코드만 Kotlin으로 작성하고 나머지는 Java 코드는 그래도 유지한 채로 사용할 수 있습니다.
 * 하지만 Kotlin과 Java는 언어 구성이 엄연히 다른 만큼 일부 기능은 Java와 Kotlin 간 혼용을 위해 특별한 처리를 해야 합니다.
 
+### Kotlin Android Extension
+* [Kotlin Android Extenstion]
+* Kotlin Andrtoid Extension은 복잡한 구조로 구성된 화면을 다루는 코드의 가독성 문제 등을 해결할 수 있는 친구입니다.
+* 코드를 보기도 편해지고 짧아져요!
+
 [Start Kotlin]:https://github.com/jinusong/Kotlin/tree/master/Start%20Kotlin
 
 [Java Vs Kotlin]:https://github.com/jinusong/Kotlin/tree/master/Java%20Vs%20Kotlin
