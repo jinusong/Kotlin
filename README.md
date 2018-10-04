@@ -37,14 +37,14 @@
 * Kotlin Andrtoid Extension은 복잡한 구조로 구성된 화면을 다루는 코드의 가독성 문제 등을 해결할 수 있는 친구입니다.
 * 코드를 보기도 편해지고 짧아져요!
 
-[Start Kotlin]:https://github.com/jinusong/Kotlin/tree/master/Start%20Kotlin
+[Start Kotlin]:Kotlin/Start Kotlin/
 
-[Java Vs Kotlin]:https://github.com/jinusong/Kotlin/tree/master/Java%20Vs%20Kotlin
+[Java Vs Kotlin]:Kotlin/Java Vs Kotlin/
 
-[ Characteristics of Kotlin ]:https://github.com/jinusong/Kotlin/tree/master/Kotlin's%20Characteristics%20
+[ Characteristics of Kotlin ]:Kotlin/Characteristics of Kotlin/
 
-[Standard Library Function]:https://github.com/jinusong/Kotlin/tree/master/Standard%20Library%20of%20Kotlin
+[Standard Library Function]:Kotlin/Standard Library Function/
 
-[Using Kotlin with Java]:https://github.com/jinusong/Kotlin/tree/master/Using%20Kotlin%20with%20Java
+[Using Kotlin with Java]:Kotlin/Using Kotlin with Java/
 
-[Kotlin Android Extension]: https://github.com/jinusong/Kotlin/tree/master/Kotlin%20Android%20Extension
+[Kotlin Android Extension]: Kotlin/Kotlin Android Extension/
