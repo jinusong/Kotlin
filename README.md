@@ -42,16 +42,16 @@
 * 안드로이드 애플리케이션 개발에 유용한 유틸리티 함수를 제공합니다.
 * 젯브레인 사에서 만들어 직접 배포하는 Kotlin 라이브러리입니다. 
 
-[Start Kotlin]: Kotlin/StartKotlin/
+[Start Kotlin]: https://github.com/jinusong/Kotlin/tree/master/Start%20Kotlin
 
-[Java Vs Kotlin]:Kotlin/JavaVsKotlin/
+[Java Vs Kotlin]:https://github.com/jinusong/Kotlin/tree/master/Java%20Vs%20Kotlin
 
-[ Characteristics of Kotlin ]:Kotlin/CharacteristicsofKotlin/
+[ Characteristics of Kotlin ]:https://github.com/jinusong/Kotlin/tree/master/Characteristics%20of%20Kotlin
 
-[Standard Library Function]:Kotlin/StandardLibraryFunction/
+[Standard Library Function]:https://github.com/jinusong/Kotlin/tree/master/Standard%20Library%20of%20Kotlin
 
-[Using Kotlin with Java]:Kotlin/UsingKotlinwithJava/
+[Using Kotlin with Java]:https://github.com/jinusong/Kotlin/tree/master/Using%20Kotlin%20with%20Java
 
-[Kotlin Android Extension]: Kotlin/KotlinAndroidExtension/
+[Kotlin Android Extension]: https://github.com/jinusong/Kotlin/tree/master/Kotlin%20Android%20Extension
 
-[Anko]: Kotlin/Anko/
+[Anko]: https://github.com/jinusong/Kotlin/tree/master/Anko
