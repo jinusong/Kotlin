@@ -27,3 +27,95 @@
 
 </LinearLayout>
 ~~~
+## 예시 Java코드
+* 코드는 어댑터 Java 코드입니다.
+* 각 항목을 리스트에 표시하기 위해 사용하는 뷰홀더 내부에서 액티비티와 프래그먼트와 유사하게 findViewById() 메서드를 사용하는 것을 확인할 수 있습니다.
+~~~java
+public class CityAdapter extends RecyclerView.Apdater<CityAdapter.Holder>{
+    
+    private List<Pair<String, String> cities;
+
+    public CityAdapter() {
+        cities = new ArrayList<>();
+        cities.add(Pair.create("Seoul", "SEO"));
+        cities.add(Pair.create("Tokyo","TOK"));
+        cities.add(Pair.create("Mountain View","MTV"));
+        cities.add(Pair.create("Singapore", "SIN"));
+        cities.add(Pair.create("New York", "NYC"));
+    }
+
+    @Override
+    public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new Holder(parent);
+    }
+
+    @Override
+    public void onBindViewHolder(Holder holder, int position) {
+        Pair<String, String> item = cities.get(position);
+
+        // 각 부분에 해당하는 값을 반영합니다.
+        holder.cityName.setText(item.first);
+        holder.cityCode.setText(item.second);
+    }
+
+    @Override
+    public int getItemCount() {
+        return null != cities ? cities.size() : 0;
+    }
+
+    class Holder extends RecyclerView.ViewHolder {
+
+        // 뷰 인스턴스 선언 
+        TextView cityName;
+
+        TextView cityCode;
+
+        Holder(ViewGroup parent) {
+            super(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_city, parent, flase));
+
+            // findViewById()를 사용하여 뷰 인스턴스를 받아옵니다.
+            cityName = (TextView) itemView.findViewById(R.id.tv_city_name);
+            cityCode = (TextView) itemView.findViewById(R.id.tv_city_code);
+        }
+    }
+}
+~~~
+
+## Kotlin Android Extension 적용
+* Kotlin Android Extension을 사용하면 앞의 Java 코드를 다음과 같이 표현할 수 있습니다.
+* Kotlin Android Extension은 뷰홀더의 itemView를 통해 레이아웃 내 뷰에 접근할 수 있도록 지원합니다.
+
+~~~kotlin
+// item_city.xml 레이아웃에 있는 뷰를 사용하기 위한 import 문
+import kotlinx.android.synthetic.main.item_city.view.*
+...
+
+class CityAdapter : RecyclerView.Adapter<CityAdapter.Holder>() {
+    private val cities = listOf(
+        "Seoul" to "SEO", 
+        "Tokyo" to "TOK", 
+        "Mountain View" to "MTV",
+        "Singapore" to "SIN", 
+        "New York" to "NTC")
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = Holder(parent)
+
+        override fun onBindViewHolder(holder: Holder, position: Int) {
+            val (city, code) = cities[position]
+
+            // 코틀린 안드로이드 익스텐션을 사용하여 레이아웃 내 뷰에 접근하려면
+            // 뷰홀더 내의 itemView를 거쳐야 합니다.
+            with(holder.itemView) {
+                
+                // 뷰 ID를 사용하여 인스턴스에 바로 접근합니다.
+                tv_city_name.text = city
+                tv_city_code.text = code
+            }
+        }
+
+        override fun getItemCount() = cities.size
+
+        inner class Holder(parent: ViewGroup)
+        : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflater(R.layout.item_city, parent, false))
+}
+~~~
