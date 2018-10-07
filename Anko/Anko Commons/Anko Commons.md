@@ -221,3 +221,80 @@ class MainActivity: AppCompatActivity(), AnkoLogger {
 * 안드로이드는 다양한 기기를 지원하기 위해 픽셀(px) 단위 대신 dip(혹은 dp; device independent pixels)나 sp(scale independent pixels)를 사용합니다.
 * dp나 sp 단위는 각 단말기의 화면 크기나 밀도에 따라 화면에 표시되는 크기를 일정 비율로 조정하므로, 다양한 화면 크기나 밀도를 가진 단말기에 대응하는 UI를 작성할 때 유용합니다.
 * 커스텀 뷰 내뷰와 같이 뷰에 표시되는 요소의 크기를 픽셀 단위로 다루는 경우 dp나 sp단위를 픽셀 단위로 변환하기 위해 복잡한 과정을 거쳐야 합니다.
+~~~kotlin
+class MainActivity : AppCompatActivity() {
+    fun doSomething() {
+        // 100dp를 픽셀 단위로 변환합니다.
+        val dpInPixel = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, 100f, resources.displayMetrics)
+
+        // 16sp를 픽셀 단위로 변환합니다.
+        val spInPixel = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP, 16f, resources.displayMetrics)
+    }
+    ...
+}
+~~~
+* Anko에서 제공하는 dip() 및 sp() 함수를 사용하면 이러한 단위를 매우 간단히 변환할 수 있습니다.
+* 단위를 변환하기 위해 단말기의 화면 정보를 담고 있는 DisplayMetrics 객체가 필요하므로, 이 함수들은 단말기 화면 정보에 접근할 수 있는 클래스인 Context를 상속한 클래스 혹은 커스텀 뷰 클래스 내에서 사용할 수 있습니다.
+* dip() 함수 및 sp() 함수를 사용하여 앞의 코드를 간단하게 표현한 모습입니다.
+* TypedValue.applyDimension() 메서드는 Float 형 인자만 지원했지만, dip() 및 sp() 함수는 Int 형 인자도 지원합니다.
+~~~kotlin
+// 100dp를 픽셀 단위로 변환합니다.
+val dpInPixel = dip(100)
+
+// 16sp를 픽셀 단위로 변환합니다.
+val spInPixel = sp(16)
+~~~
+* 반대로, 픽셀 단위를 dp나 sp 단위로 변환하는 함수도 제공합니다. 각각 px2dip(), px2sp() 함수를 사용합니다.
+~~~kotlin
+// 300px를 dp 단위로 변환합니다.
+val pxInDip = px2dip(300)
+
+// 80px를 sp 단위로 변환합니다.
+val pxInSp = px2sp(80)
+~~~
+## 기타
+* 여러 단말기 환경을 지원하는 애플리케이션은, 단말기 환경에 따라 다른 형태의 UI를 보여주도록 구현하는 경우가 많습니다.
+* 이러한 경우, configuration() 함수를 사용하면 특정 단말기 환경일 때만 실행할 코드를 간단하게 구현할 수 있습니다.
+
+|매개변수 이름|단말기 환경 종류|
+|---------|----------|
+|density|화면 밀도|
+|language|시스템 언어|
+|long|화면 길이|
+|nightMode|야간모드 여부|
+|orientation|화면 방향|
+|rightToLeft|RTL(Right-to-Left)레이아웃 여부
+|screenSize|화면 크기|
+|smallestWidth|화면의 가장 작은 변의 길이|
+|uiMode|UI 모드(일반, TV, 차량, 시계, VR 등)|
+* configuration() 또한 단말기 환경에 접근해야 하므로 이 정보에 접근할 수 있는 Context 클래스 혹은 이를 상속한 클래스(액티비티, 프래그먼트)에서만 사용할 수 있습니다.
+~~~kotlin
+class MainActivity : AppCompatActivity() {
+    fun doSomething() {
+        configuration(orientation = Orientation.PORTRAIT) {
+            // 단말기가 세로 방량일 때 수행할 코드를 작성합니다.
+            ...
+        }
+        configuration(orientation = Orientation.LANDSCAPE, language = "ko") {
+            // 단말기가 가로 방향이면서 시스템 언어가 한국어로 설정되어 있을 때
+            // 수행할 코드를 작성합니다.
+            ...
+        }
+    }
+    ...
+}
+~~~
+* 단순히 단말기의 OS 버전에 따라 분기를 수행하는 경우 doFromSdk()와 doIfSdk()를 사용할 수 있습니다.
+~~~kotlin
+doFromSdk(Build.VERSION_CODES.0) {
+    // 안드로이드 8.0 이상 기기에서 수행할 코드를 작성합니다.
+    ...
+}
+
+doIfSdk(Build.VERSION_CODES.N) {
+    // 안드로이드 7.0 기기에서만 수행할 코드를 작성합니다.
+    ...
+}
+~~~
