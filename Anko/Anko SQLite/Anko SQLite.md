@@ -140,4 +140,4 @@ db.select("User", "name")
         "userId" to 42)
 ~~~
 * 여기에서 {userId} 부분은 42, {userName}은 'John'으로 바뀝니다. 형식이 숫자가 아닌 경우 (Int, Float 등) 또는 Boolean 값이면 escaped됩니다. 다른 형식의 경우 toString() 표현이 사용됩니다.
-* 
+* whereSimple 함수는 String 자료형을 허용합니다. 이것은 SQLiteDatavase의 query() 와 같은 일을 합니다. (질문 표시 ?는 자료형의 실제 값과 대체됩니다.)
