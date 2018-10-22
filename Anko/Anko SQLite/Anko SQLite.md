@@ -141,3 +141,103 @@ db.select("User", "name")
 ~~~
 * 여기에서 {userId} 부분은 42, {userName}은 'John'으로 바뀝니다. 형식이 숫자가 아닌 경우 (Int, Float 등) 또는 Boolean 값이면 escaped됩니다. 다른 형식의 경우 toString() 표현이 사용됩니다.
 * whereSimple 함수는 String 자료형을 허용합니다. 이것은 SQLiteDatavase의 query() 와 같은 일을 합니다. (질문 표시 ?는 자료형의 실제 값과 대체됩니다.)
+* 이 쿼리를 어떻게 실행할까요? exec() 함수를 씁니다. Cursor. () -> T 형식의 확장 기능을 허용합니다. 수신한 확장 기능을 시작한 다음 Cursor를 닫아 스스로 수행할 필요가 없도록합니다.
+~~~kotlin
+db.select("User", "email").exec {
+    // Doing some stuff with emails
+}
+~~~
+## Parsing query results
+* 그래서 우리는 Cursor를 가지고 있고, 그것을 정규 클래스로 어떻게 파싱할 수 있을까요? 
+* Anko는 parseSingle, parseOpt 및 parseList 함수를 제공하여 훨씬 쉽게 처리 할 수 ​​있습니다.
+
+| Method | Description |
+|--------|-------------|
+| parseSingle(rowParser): T | Parse exactly one row|
+| parseOpt(rowParser): T? | Parse zero or one row |
+| parseList(rowParser): List<T> | Parse zero or more rows |
+
+* 수신 된 Cursor가 둘 이상의 행을 포함하면 parseSingle () 및 parseOpt ()가 예외를 throw합니다.
+* rowParser 란 무엇일까요? 각 함수는 RowParser와 MapRowParser인 두 가지 유형의 파서를 지원합니다.
+~~~kotlin
+interface RowParser<T> {
+    fun parseRow(columns: Array<Any>): T
+}
+
+interface MapRowParser<T> {
+    fun parseRow(columns: Map<String, Any>): T
+}
+~~~
+* 매우 효율적인 방법으로 쿼리를 작성하려면 RowParser를 사용합니다 (하지만 각 열의 인덱스를 알아야합니다). 
+* parseRow는 Any의 타입을 받아들입니다 (Any 형은 Long, Double, String 또는 ByteArray 이외의 것일 수 있음). 
+* 반면에 MapRowParser를 사용하면 열 이름을 사용하여 행 값을 가져올 수 있습니다.
+* Anko는 이미 간단한 단일 열 행에 대한 파서를 보유하고 있습니다.
+
+    * ShortParser
+    * IntParser
+    * LongParser
+    * FloatParser
+    * DoubleParser
+    * StringParser
+    * BlobParser
+* 또한 클래스 생성자에서 행 파서를 만들 수 있습니다.
+클래스가 있다고 가정합니다.
+~~~kotlin
+class Person(val firstName: String, val lastName: String, val age: Int)
+~~~
+* 파서는 간단해집니다.
+~~~kotlin
+val rowParser = classParser<Person>()
+~~~
+* 현재로서는 기본 생성자에 선택적 매개 변수가있는 경우 Anko는 이러한 파서 작성을 지원하지 않습니다.
+* 또한 생성자는 Java Reflection을 사용하여 호출되므로 커다란 데이터 세트의 경우 사용자 정의 RowParser를 작성하는 것이 더 합리적입니다.
+* Anko db.select () 빌더를 사용하는 경우에는 parseSingle, parseOpt 또는 parseList를 직접 호출하고 적절한 파서를 전달할 수 있습니다.
+## Custom row parsers
+* 예를 들어, 열 (Int, String, String)에 대해 새 파서를 만들어 봅시다. 가장 일반적인 방법은 다음과 같습니다.
+~~~kotlin
+class MyRowParser : RowParser<Triple<Int, String, String>> {
+    override fun parseRow(columns: Array<Any>): Triple<Int, String, String> {
+        return Triple(columns[0] as Int, columns[1] as String, columns[2] as String)
+    }
+}
+~~~
+* 자, 이제 코드에 3가지 명시적 캐스트가 있습니다. rowParser 함수를 사용하여 제거해보겠습니다.
+~~~kotlin
+val parser = rowParser { id: Int, name: String, email: String ->
+    Triple(id, name, email)
+}
+~~~
+* 이게 다 입니다. rowParser는 모든 캐스트를 생성하고 원하는대로 람다 매개 변수의 이름을 지정할 수 있습니다.
+## Cursor streams
+* Anko는 SQLite Cursor에 기능적으로 접근하는 방법을 제공합니다. 
+*  cursor.asSequence () 또는 cursor.asMapSequence () 확장 함수를 호출하여 일련의 행을 가져옵니다. 커서를 닫는 것을 잊지 마세요 :)
+## Updating values
+* 사용자 중 한 명에게 새로운 이름을 줍니다.
+~~~kotlin
+update("User", "name" to "Alice")
+    .where("_id = {userId}", "userId" to 42)
+    .exec()
+~~~
+* 또한 전통적인 방식으로 쿼리를 제공하려는 경우 update에는 whereSimple () 메서드가 있습니다.
+~~~kotlin
+update("User", "name" to "Alice")
+    .`whereSimple`("_id = ?", 42)
+    .exec()
+~~~
+## Delete Data
+* 행을 삭제 해 봅시다 (delete 메소드에는 whereSimple () 메소드가 없으며, 대신 인수에 직접 쿼리를 제공합니다).
+~~~kotlin
+val numRowsDeleted = delete("User", "_id = {userID}", "userID" to 37)
+~~~
+## Transaction
+* transaction ()이라는 특별한 함수가 있는데, 여러 개의 데이터베이스 연산을 하나의 SQLite 트랜잭션으로 묶을 수 있습니다.
+~~~kotlin
+transaction {
+    // Your transaction code
+}
+~~~
+* {} 블록 내에 예외가 발생하지 않으면 트랜잭션은 성공으로 표시됩니다.
+* 어떤 이유로 트랜잭션을 중단하려면 TransactionAbortException을 throw 하세요. 이 경우에는이 예외를 직접 처리 할 필요가 없습니다.
+
+## 원문
+* https://github.com/Kotlin/anko/wiki/Anko-SQLite
