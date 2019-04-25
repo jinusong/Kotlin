@@ -42,6 +42,23 @@
 * 안드로이드 애플리케이션 개발에 유용한 유틸리티 함수를 제공합니다.
 * 젯브레인 사에서 만들어 직접 배포하는 Kotlin 라이브러리입니다. 
 
+### Kotlin Restart
+* [Kotlin Restart]
+* 코틀린을 다시 공부하면서 기억해야할 것들을 적어둔 곳입니다.
+
+### Functional Kotlin
+* [Functional Kotlin]
+* 함수형 프로그래밍을 코틀린으로 해봅니다.
+* 관련 레포: [RxKotlin], [Kotlin Coroutines]
+
+### Kotlin Coroutines
+* [Kotlin Coroutines]
+* 비동기 처리를 쉽게 도와주는 코루틴 친구!
+
+### Koin
+* [Koin]
+* 코틀린에서 di를 좀 더 쉽게 할 수 있도록 나온 DSL입니다!
+
 [Start Kotlin]: https://github.com/jinusong/Kotlin/tree/master/Start%20Kotlin
 
 [Java Vs Kotlin]:https://github.com/jinusong/Kotlin/tree/master/Java%20Vs%20Kotlin
@@ -55,3 +72,13 @@
 [Kotlin Android Extension]: https://github.com/jinusong/Kotlin/tree/master/Kotlin%20Android%20Extension
 
 [Anko]: https://github.com/jinusong/Kotlin/tree/master/Anko
+
+[Functional Kotlin]: https://github.com/jinusong/Kotlin/tree/master/Functional%20Kotlin
+
+[RxKotlin]: https://github.com/jinusong/ReactiveX-in-Android/tree/master/RxKotlin
+
+[Kotlin Coroutines]: https://github.com/jinusong/Kotlin/blob/master/Kotlin%20Coroutines/Kotlin%20Coroutines.md
+
+[Koin]: https://github.com/jinusong/Kotlin/blob/master/Koin/Koin.md
+
+[Kotlin Restart]: https://github.com/jinusong/Kotlin/blob/master/Koin/Koin.md
