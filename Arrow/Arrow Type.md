@@ -301,7 +301,9 @@ fun main(args: Array<String>) {
 ~~~
 
 * 같은 타입의 값과 결과를 얻었지만 모나드 트랜스포머는 다른 옵션을 가지고 있습니다.
+
 * 모나드 트랜스포머는 하나처럼 실행될 수 있는 두 모나드의 조합입니다.
+
 * 예를 들어 Option은 Either 내에 중첩된 모나드 타입이므로 OptionT를 사용할 것입니다.
 
 ~~~kotlin
@@ -389,4 +391,203 @@ fun comprehensionTryDivision(a: Int, b: Int, den: Int): Try<Tuple2<Int, Int>> {
 }
 ~~~
 
-* M
+* MonadError 인스턴스를 사용하는 다른 종류의 모나딕 컨프리헨션이 있습니다.
+
+~~~kotlin
+fun monadErrorTryDivision(a: Int, b: Int, den: Int): Try<Tuple2<Int, Int>> {
+    return Try.monadError().bindingCatch {
+        val aDiv = divide(a, den)!!
+        val bDiv = divide(b, den)!!
+        aDiv toT bDiv
+    }.ev()
+}
+~~~
+* monadError.bindingCatch를 사용하면 예외를 발생하는 모든 연산은 실패로 끝나고 마지막에 반환은 Try<T>로 래핑됩니다.
+* MonadError는 Option과 Either에서도 사용할 수 있습니다.
+
+## State
+* State는 애플리케이션 상태를 처리하기 위한 함수적 접근 방식을 제공하는 구조입니다.
+
+* State<S, A>는 S -> Tuple2<S, A>에 대한 추상화입니다.
+* S는 상태 타입을 나타내며, Tuple2<S, A>은 결과인데, S는 새롭게 업데이트된 상태이며, A는 함수 반환입니다.
+
+* 다음은 가격고 이를 계산하는 두 가지를 반환하는 간단한 예입니다.
+* 가격을 계산하려면 VAT 20%를 추가하고 가격이 일정 기준을 초과하는 경우 할인을 적용해야 합니다.
+~~~kotlin
+import arrow.core.Tuple2
+import arrow.core.toT
+import arrow.data.State
+
+typealias PriceLog = MutableList<Tuple2<String, Double>>
+
+fun addVat(): State<PriceLog, Unit> = State { log: PriceLog -> 
+    val (_, price) = log.last()
+    val vat = price * 0.2
+    log.add("Add VAT: $vat" toT price + vat)
+    log toT Unit
+}
+~~~
+
+* MutableList<Tuple2<String, Double>>을 위한 타입 앨리어스 PriceLog를 가집니다.
+
+* PriceLog는 State 대표가 됩니다. 각 단계는 Tuple2<String, Double>로 표현됩니다.
+
+* 첫 번째 함수 addVat(): State<PriceLog, Unit>은 첫 번째 단계를 표현합니다.
+
+* PriceLog와 단계를 적용하기 전의 state를 받고 Tuple2<PriceLog, Unit>을 반환해야 하는 State 빌더를 사용하는 함수를 작성합니다.
+
+* 현재는 각격이 필요 없으므로 Unit을 사용합니다.
+
+~~~kotlin
+fun applyDiscount(threshold: Double, discount: Double): State<PriceLog, Unit> = State { log -> 
+    val (_, price) = log.last()
+    if(price > threshold) {
+        log.add("Applying - $discount" toT price - discount)
+    } else {
+        log.add("No discount applied" toT price)
+    }
+    log toT Unit
+}
+~~~
+* applyDiscount 함수는 두 번째 단계입니다. 여기서 소개한 유일한 새로운 요소는 threshold, discount라는 파라미터입니다.
+
+~~~kotlin
+fun finalPrice(): State<PriceLog, Double> = State { log -> 
+    val (_, price) = log.last()
+    log.add("Final Price" toT price)
+    log toT price
+}
+~~~
+* 마지막 단계는 finalPrice() 함수로 표현되며, 이제 Unit 대신 Double을 반환합니다.
+
+~~~kotlin
+import arrow.data.ev
+import arrow.instances.monad
+import arrow.typeclasses.binding
+
+fun calculatePrice(threshold: Double, discount: Double) = 
+State().monad<PriceLog>().binding {
+    addVat().bind()
+    applyDiscount(threshold, discount).bind() //Unit
+    val price: Double = finalPrice().bind()
+    price
+}.ev()
+~~~
+
+* 일련의 단계를 표현하기 위해 모나드 컴프리헨션을 사용하고 State 함수를 순차적으로 사용합니다.
+
+* 한 함수에서 다음 함수로 PriceLog 상태가 암시적으로 흐릅니다.
+* 마지막에 최종 가격을 산출합니다. 새 단계를 추가하거나 기존 것을 전환하는 것은 선을 추가하거나 이동하는 것처럼 쉽습니다.
+
+~~~kotlin
+import arrow.data.run
+import arrow.data.runA
+
+fun main(args: Array<String>) {
+    val (history: PriceLog, price: Double) = calculatePrice(100.0, 2.0).run(mutableListOf("Init" toT 15.0))
+    println("Price: $price")
+    println("::History::")
+    history.map { (text, value) -> "$text\t|\t$value" }
+        .forEach(::println)
+    
+    val bigPrice: Double = calculatePrice(100.0, 2.0).runA(mutableListOf("Init" toT 1000.0))
+    println("bigPrice = $bigPrice")
+}
+~~~
+* calculatePrice 함수를 사용하려면 threshold와 discount 값을 제공해야 하며, 그런 다음 최초 상태와 함께 확장 함수를 실행해야 합니다.
+* 가격에만 관심이 있다면 runA만 실행하고 history뿐이라면 runS를 실행합니다.
+
+### State가 있는 코리커젼
+* State는 코리커젼에서 유용합니다.
+
+~~~kotlin
+fun <T, S> unfold(s: S, f: (S) -> Pair<T, S>?): Sequence<T> {
+    val result = f(s)
+    return if (result != null) {
+        squenceOf(result.first) + unfold(result.second, f)
+    } else {
+        sequenceOf()
+    }
+}
+~~~
+* 원래 unfold 함수는 State<S, T>와 매우 비슷한 f: (S) -> Pair<T, S>?를 사용합니다.
+
+~~~kotlin
+fun <T, S> unfold(s: S, state: State<S, Option<T>>): Sequence<T> {
+    val (actualState: S, value: Option<T>) = state.run(s)
+    return value.fold(
+        { sequenceOf() }, 
+        { t -> 
+            sequenceOf(t) + unfold(actualState, state)
+    })
+}
+~~~
+* lambda (S) -> Pair<T, S>?를 갖는 대신 State<S, Option<T>>를 사용하고 None을 위해 빈 시퀀스 혹은 Some<T>를 위해 재귀 호출을 갖는 Option으로부터 폴드 함수를 사용합니다.
+
+~~~kotlin
+fun factorial(size: Int): Sequence<Long> {
+    return sequenceOf(1L) + unfold(1L to 1) { (acc, n) -> 
+        if(size > n) {
+            val x = n * acc
+            (x) to (x to n + 1)
+        } else null
+    }
+}
+~~~
+* 이 팩토리얼 함수는 Pair<Long, Int>와 람다 (Pair<Long, Int>) -> Pair<Long, Pair<Long, Int>>>를 갖는 unfold를 사용합니다.
+
+~~~kotlin
+import arrow.syntax.option.some
+
+fun factorial(size: Int): Sequence<Long> {
+    return sequenceOf(1L) + unfold(1L toT 1, State { (acc, n) -> 
+        if (size > n) {
+            val x = n * acc
+            (x toT n + 1) toT x.some()
+        } else {
+            (0L toT 0) toT None
+        }
+    })
+}
+~~~
+* 리팩토링된 팩토리얼은 State<Tuple<Long, Int>, Option<Long>>을 사용하지만 내부 로직은 대부분 같습니다.
+* 새 팩토리얼은 null을 사용하지 않는데, 이 것은 상당한 개선입니다.
+
+~~~kotlin
+fun fib(size: Int): Sequence<Long> {
+    return sequenceOf(1L) + unfold(Triple(0L, 1L, 1)) { (cur, next, n) -> 
+        if  (size > n) {
+            val x = cur + next
+            (x) to Triple(next, x, n + 1)
+        } else null
+    }
+}
+~~~
+* 마찬가지로 피보나치는 Triple<Long, Long, Int>와 람다 (Triple<Long, Long.Int>) -> Pair<Long, Tirple<Long, Long, Int>>? 를 갖는 unfold를 사용합니다.
+
+~~~kotlin
+import arrow.syntax.tuples.plus
+
+fun fib(size: Int): Sequence<Long> {
+    return sequenceOf(1L) + unfold((0L toT 1L) + 1, State { (cur, next, n) -> 
+        if(size > n) {
+            val x = cur + next
+            ((next toT x) + (n + 1)) toT x.some()
+        } else {
+            ((0L toT 0L) + 0) toT None
+        }
+    })
+}
+~~~
+
+* 그리고 리팩토링된 피보나치는 State<Tuple3<Long, Long, Int>, Option<Long>>을 사용합니다.
+* Tuple2<A, B>와 함께 사용되는 확장 연산자 plus와 C는 Tuple3<A, B, C>를 반환한다는 점에 주의를 기울여야 합니다.
+
+~~~kotlin
+fun main(args: Array<String>) {
+    factorial(10).forEach(::println)
+    fib(10).forEach(::println)
+}
+~~~
+* 이제는 시퀀스를 생성하기 위해 코리커젼 함수를 사용할 수 있습니다. 
+* 엔터프라이즈 인티그레이션 패턴의 메시지 히스토리 혹은 비행 확인 긴 등록 양식과 같은 많은 단계를 갖는 폼 안내와 같은 State의 더 많은 사용법이 있습니다.
